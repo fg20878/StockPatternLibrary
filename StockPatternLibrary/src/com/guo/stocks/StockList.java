@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 /* Jason Guo
  * 12/28/16 - current
- * Knight Corporation LLC
+ * (c) Knight LLC
  * 
  * This class contains a list of daily stock statistics
  * along with methods that finds patterns from the days
@@ -62,6 +62,13 @@ public class StockList {
 			
 			stockList.add(new StockDay(open, close, high, low, volume, date));	
 		}
+		
+		for( int i = 0; i <= stockList.size()/2; i++) {
+			
+			StockDay temp = new StockDay(stockList.get(i));
+			stockList.set(i, stockList.get(stockList.size() - 1 - i));
+			stockList.set(stockList.size() - 1 - i, temp);
+		}
 	}
 	
 	public StockList(StockDay[] n, String c, String s) {
@@ -80,7 +87,6 @@ public class StockList {
 		stockList = new ArrayList<StockDay>(n);
 	}
 	
-	
 	public StockList(StockDay n) {
 		
 		stockList = new ArrayList<StockDay>(1);
@@ -88,17 +94,28 @@ public class StockList {
 		stockList.add(n);
 	}
 	
+	
 	public void AddStockDay(StockDay n) {
 		
 		stockList.add(n);
 	}
 	
-	public String[] FindEngulfingPattern() {
+	public EngulfDataPoint[] findUpwardEngulfingPattern() {
+		
+		return findEngulfingPattern(false);
+	}
+	
+	public EngulfDataPoint[] findDownwardEngulfingPattern() {
+		
+		return findEngulfingPattern(true);
+	}
+
+	private EngulfDataPoint[] findEngulfingPattern(boolean isDown) {
 		
 		//probably should have used a linked list...
-		int increment =stockList.size()/50 + 1;
-		String[] toReturn = new String[stockList.size()/50 + 1];
+		EngulfDataPoint[] toReturn = new EngulfDataPoint[stockList.size()/50 + 1];
 		int size = 0;
+		int increment =stockList.size()/50 + 1;
 		
 		if(stockList.size() < 2)
 			return null;
@@ -109,19 +126,33 @@ public class StockList {
 			
 			StockDay first = sortedStockList.get(i);
 			StockDay second = sortedStockList.get(i + 1);
+			
 			double firstLow = first.getLowPrice();
 			double firstHigh = first.getHighPrice();
+			
 			double secondClose = second.getClosePrice();
 			double secondOpen = second.getOpenPrice();
 			
-			if(secondOpen < secondClose && secondClose > firstHigh  && secondOpen < firstLow) {
+			double secondHigher = secondOpen;
+			double secondLower = secondClose;
+			
+			if(secondClose > secondOpen) {
+				
+				secondHigher = secondClose;
+				secondLower = secondOpen;
+			}
+			
+			
+			
+			if(first.isDayUp() == second.isDayDown() && second.isDayDown() == isDown
+			   && secondHigher >= firstHigh  && secondLower <= firstLow) {
 					
-					toReturn[size] = second.getDate();
+					toReturn[size] = new EngulfDataPoint(first, second);
 					size++;
 					
 					if(size == toReturn.length) {
 						
-						String[] temp = new String[toReturn.length + increment];
+						EngulfDataPoint[] temp = new EngulfDataPoint[toReturn.length + increment];
 						
 						for( int j = 0; j < size; j++)
 							temp[j] = toReturn[j];
@@ -131,7 +162,7 @@ public class StockList {
 				}
 		}
 		
-		String[] finalToReturn = new String[size];
+		EngulfDataPoint[] finalToReturn = new EngulfDataPoint[size];
 		
 		for( int j = 0; j < size; j++)
 			finalToReturn[j] = toReturn[j];
@@ -139,6 +170,15 @@ public class StockList {
 		return finalToReturn;
 	}
 
+	public int findDateIndex(String date) {
+		
+		for(int i = 0; i < stockList.size(); i++)
+			if(stockList.get(i).equals(date))
+				return i;
+		
+		return -1;
+	}
+	
 	/**
 	 * uses good ol' selection sort
 	 * @return
@@ -181,7 +221,6 @@ public class StockList {
 		return toReturn;
 	}
 
-	
 	public void sortDateLowToHigh() {
 		
 		stockList = getDateLowToHigh();
@@ -191,6 +230,8 @@ public class StockList {
 		
 		stockList = getDateHighToLow();
 	}
+	
+	
 	
 	public String getCompanyName() {
 		return companyName;

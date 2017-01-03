@@ -1,7 +1,7 @@
 package com.guo.stocks;
 /* Jason Guo
- * 12/28/16 - present
- * (c) Knight Corporation LLC
+ * Worked on: 12/28/16 - 1/2/17
+ * (c) Knight LLC
  * This class keeps track of the data from one day of a stock
  */
 public class StockDay {
@@ -23,6 +23,19 @@ public class StockDay {
 		setLowPrice(low);
 		setVolume(vol);
 		date = d;
+	}
+	
+	public StockDay(StockDay toCopy) {
+		
+		if(toCopy == null) 
+			throw new IllegalArgumentException("Cannot copy null parameter");
+		
+		setOpenPrice(toCopy.getOpenPrice());
+		setClosePrice(toCopy.getClosePrice());
+		setHighPrice(toCopy.getHighPrice());
+		setLowPrice(toCopy.getLowPrice());
+		setVolume(toCopy.getVolume());
+		setDate(toCopy.getDate());
 	}
 
 	public double getOpenPrice() {
@@ -66,8 +79,7 @@ public class StockDay {
 	}
 	
 	/*used for date comparisons
-	/date must be in year-month-day format 
-	but no need for leftside zeros*/
+	date must be in year-month-day format*/
 	public int getDateNumber() {
 		
 		return Integer.valueOf(date.substring(0,4)) * 10000 + 
@@ -99,16 +111,15 @@ public class StockDay {
 		
 		String vol = String.valueOf(volume);
 		
-		String toReturn = open+" "+close+" "+high+" "+low+" "+
-						  spaces(LENGTH_DOUBLE - vol.length())+vol+" "+date; 
+		String toReturn = date+" "+open+" "+close+" "+high+" "+low+" "+
+						  spaces(LENGTH_DOUBLE - vol.length())+vol; 
 		
 		return toReturn;
 	}
 	
-	/**
+	/*
 	 * returns num number of spaces in a String
-	 * @param num
-	 * @return
+	 * used for toString
 	 */
 	private String spaces(int num){
 		
@@ -120,4 +131,27 @@ public class StockDay {
 		return toReturn.toString();
 	}
 	
+	public boolean isDayUp() {
+		
+		return closePrice > openPrice;
+	}
+	
+	public boolean isDayDown() {
+		
+		return openPrice > closePrice;
+	}
+	
+	public double diffHiLow() {
+		
+		return highPrice - lowPrice;
+	}
+	
+	/**
+	 * closePrice - openPrice
+	 * @return
+	 */
+	public double diffCloseOpen() {
+		
+		return closePrice - openPrice;
+	}
 }

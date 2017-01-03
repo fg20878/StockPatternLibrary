@@ -101,10 +101,10 @@ public class StockTest {
 		
 		System.out.println("Start StockList Test 3");
 		StockList test = new StockList("GOOG");
-		String[] pattern = test.FindEngulfingPattern();
+		EngulfDataPoint[] pattern = test.findDownwardEngulfingPattern();
 		
-		for(String date: pattern)
-			System.out.println(date);
+		for(EngulfDataPoint date: pattern)
+			System.out.println(date.getDate());
 		
 		System.out.println("End StockList Test 3\n\n");
 	}
@@ -123,6 +123,50 @@ public class StockTest {
 		
 		System.out.println(test.toString());
 		System.out.println("End StockList Test 4\n\n");
+	}
+	
+	@Test
+	public void stockListTest05() {
+		
+		System.out.println("Start StockList Test 5");
+		StockList test = new StockList("GOOG");
+		ArrayList<StockDay> copy = test.getList();
+		test.sortDateLowToHigh();
+		
+		EngulfDataPoint[] pattern1 = test.findDownwardEngulfingPattern();
+		EngulfDataPoint[] pattern2 = test.findUpwardEngulfingPattern();
+		
+		for(int i = 0; i < pattern1.length; i++) {
+			int firstIndex =test.findDateIndex(pattern1[i].getDate());
+			if(firstIndex == -1)
+				break;
+			StockDay first = copy.get(firstIndex);
+			StockDay second = copy.get(firstIndex + 1);
+			
+			
+			assertTrue(first.getClosePrice() > first.getOpenPrice());
+			assertTrue(second.getClosePrice() < second.getOpenPrice());
+			assertTrue(first.getHighPrice() < second.getOpenPrice());
+			assertTrue(first.getLowPrice() > second.getClosePrice());
+		}
+		
+		for(int i = 0; i < pattern2.length; i++) {
+			int firstIndex =test.findDateIndex(pattern2[i].getDate());
+			
+			if(firstIndex == -1)
+				break;
+			
+			StockDay first = copy.get(firstIndex);
+			StockDay second = copy.get(firstIndex + 1);
+			
+			
+			assertTrue(first.getClosePrice() < first.getOpenPrice());
+			assertTrue(second.getClosePrice() > second.getOpenPrice());
+			assertTrue(first.getHighPrice() < second.getClosePrice());
+			assertTrue(first.getLowPrice() > second.getOpenPrice());
+		}
+		
+		System.out.println("End StockList Test 5\n\n");
 	}
 
 }
