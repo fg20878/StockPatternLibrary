@@ -71,14 +71,14 @@ public class StockList {
 		}
 	}
 	
-	public StockList(StockDay[] n, String c, String s) {
+	public StockList(StockDay[] list, String c, String s) {
 		
 		setCompanyName(c);
 		setSymbol(s);
-		stockList = new ArrayList<StockDay>(n.length);
+		stockList = new ArrayList<StockDay>(list.length);
 		
 		for(int i = 0; i < stockList.size(); i++)
-			stockList.add(n[i]);
+			stockList.add(list[i]);
 				
 	}
 	
@@ -133,19 +133,10 @@ public class StockList {
 			double secondClose = second.getClosePrice();
 			double secondOpen = second.getOpenPrice();
 			
-			double secondHigher = secondOpen;
-			double secondLower = secondClose;
+
 			
-			if(secondClose > secondOpen) {
-				
-				secondHigher = secondClose;
-				secondLower = secondOpen;
-			}
-			
-			
-			
-			if(first.isDayUp() == second.isDayDown() && second.isDayDown() == isDown
-			   && secondHigher >= firstHigh  && secondLower <= firstLow) {
+			if(isDown && first.isDayUp() && second.isDayDown() && firstLow > secondClose && firstHigh < secondOpen ||
+			   !isDown && first.isDayDown() && second.isDayUp() && firstLow > secondOpen && firstHigh < secondClose) {
 					
 					toReturn[size] = new EngulfDataPoint(first, second);
 					size++;
@@ -169,11 +160,17 @@ public class StockList {
 		
 		return finalToReturn;
 	}
-
+	
+	
+	public StockDay findDate(String date) {
+		
+		return stockList.get(findDateIndex(date));
+	}
+	
 	public int findDateIndex(String date) {
 		
 		for(int i = 0; i < stockList.size(); i++)
-			if(stockList.get(i).equals(date))
+			if(stockList.get(i).getDate().equals(date))
 				return i;
 		
 		return -1;
@@ -251,22 +248,26 @@ public class StockList {
 	
 	public String toString() {
 		
-		StringBuffer toReturn = new StringBuffer("Open       Close      High       Low           Volume  Date\n");
-		for(int i = 0; i < stockList.size();i++) {
-			toReturn.append(stockList.get(i));
-			
-			//makes things prettier, but harder for myself
-			if(i != stockList.size() - 1)
-				toReturn.append("\n");
-				
-		}
 		
+		StringBuffer toReturn = new StringBuffer("Date       Open       Close      High       Low           Volume  \n");
+		if(stockList != null) {
+			
+			for(int i = 0; i < stockList.size() - 1;i++)
+				toReturn.append(stockList.get(i).toString()+"\n");
+		
+			if(stockList.size() != 0)
+				toReturn.append(stockList.get(stockList.size() - 1).toString());
+		}
 		return toReturn.toString();
 	}
 	
-	public ArrayList<StockDay> getList() {
+	public StockDay[] getList() {
 		
-		return stockList;
+		StockDay [] toReturn = new StockDay[stockList.size()];
+		
+		stockList.toArray(toReturn);
+		
+		return toReturn;
 	}
 }
 

@@ -92,7 +92,7 @@ public class StockTest {
 		
 		System.out.println("Start StockList Test 2");
 		StockList test = new StockList("GOOG");
-		System.out.println(test.toString());
+		//System.out.println(test.toString());
 		System.out.println("End StockList Test 2\n\n");
 	}
 	
@@ -116,12 +116,12 @@ public class StockTest {
 		StockList test = new StockList("GOOG");
 		test.sortDateLowToHigh();
 		
-		ArrayList<StockDay> sortTest = test.getList();
+		StockDay[] sortTest = test.getList();
 		
-		for(int i = 0; i < sortTest.size() - 1; i++)
-			assertTrue(sortTest.get(i).getDateNumber() < sortTest.get(i + 1).getDateNumber());
+		for(int i = 0; i < sortTest.length - 1; i++)
+			assertTrue(sortTest[i].getDateNumber() < sortTest[i + 1].getDateNumber());
 		
-		System.out.println(test.toString());
+		//System.out.println(test.toString());
 		System.out.println("End StockList Test 4\n\n");
 	}
 	
@@ -130,7 +130,7 @@ public class StockTest {
 		
 		System.out.println("Start StockList Test 5");
 		StockList test = new StockList("GOOG");
-		ArrayList<StockDay> copy = test.getList();
+		StockDay[] copy = test.getList();
 		test.sortDateLowToHigh();
 		
 		EngulfDataPoint[] pattern1 = test.findDownwardEngulfingPattern();
@@ -138,10 +138,12 @@ public class StockTest {
 		
 		for(int i = 0; i < pattern1.length; i++) {
 			int firstIndex =test.findDateIndex(pattern1[i].getDate());
-			if(firstIndex == -1)
+			if(firstIndex == -1) {
+				System.out.println("No downward engulfing patterns were found in GOOG");
 				break;
-			StockDay first = copy.get(firstIndex);
-			StockDay second = copy.get(firstIndex + 1);
+			}
+			StockDay first = copy[firstIndex];
+			StockDay second = copy[firstIndex + 1];
 			
 			
 			assertTrue(first.getClosePrice() > first.getOpenPrice());
@@ -153,11 +155,12 @@ public class StockTest {
 		for(int i = 0; i < pattern2.length; i++) {
 			int firstIndex =test.findDateIndex(pattern2[i].getDate());
 			
-			if(firstIndex == -1)
+			if(firstIndex == -1) {
+				System.out.println("No upward engulfing patterns were found in GOOG");
 				break;
-			
-			StockDay first = copy.get(firstIndex);
-			StockDay second = copy.get(firstIndex + 1);
+			}
+			StockDay first = copy[firstIndex];
+			StockDay second = copy[firstIndex + 1];
 			
 			
 			assertTrue(first.getClosePrice() < first.getOpenPrice());
@@ -168,5 +171,23 @@ public class StockTest {
 		
 		System.out.println("End StockList Test 5\n\n");
 	}
-
+	
+	@Test
+	public void stockListTest06() {
+		
+		System.out.println("Start StockList Test 6");
+		
+		StockList test = new StockList("test01");
+		test.sortDateLowToHigh();
+		
+		EngulfDataPoint[] up = test.findUpwardEngulfingPattern();
+		EngulfDataPoint[] down = test.findDownwardEngulfingPattern();
+		
+		assertTrue(up.length == 1);
+		assertTrue(up[0].equals(new EngulfDataPoint(test.findDate("2016-12-15"), test.findDate("2016-12-16"))));
+		assertTrue(down.length == 2);
+		assertTrue(down[0].equals(new EngulfDataPoint(test.findDate("2016-12-19"), test.findDate("2016-12-20"))));
+		assertTrue(down[1].equals(new EngulfDataPoint(test.findDate("2016-12-22"), test.findDate("2016-12-23"))));
+		System.out.println("End StockList Test 6\n\n");
+	}
 }

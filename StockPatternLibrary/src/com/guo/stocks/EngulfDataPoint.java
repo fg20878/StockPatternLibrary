@@ -10,14 +10,14 @@ package com.guo.stocks;
 public class EngulfDataPoint {
 
 	private String date;
-	private double firstHiLow;
-	private double secondCloseOpen;
+	private double firstDiffHiLow;
+	private double secondDiffCloseOpen;
 	
 	public EngulfDataPoint(String d, double f, double s) {
 		
 		date = d;
-		firstHiLow = f;
-		secondCloseOpen = s;
+		firstDiffHiLow = f;
+		secondDiffCloseOpen = s;
 	}
 	
 	public EngulfDataPoint(StockDay first, StockDay second) {
@@ -26,8 +26,8 @@ public class EngulfDataPoint {
 			throw new IllegalArgumentException("First date must be after second date");
 		
 		date = first.getDate();
-		firstHiLow = first.diffHiLow();
-		secondCloseOpen = second.diffCloseOpen();
+		firstDiffHiLow = first.diffHiLow();
+		secondDiffCloseOpen = second.diffCloseOpen();
 	}
 	
 	public EngulfDataPoint(EngulfDataPoint toCopy) {
@@ -36,8 +36,14 @@ public class EngulfDataPoint {
 			throw new IllegalArgumentException("Cannot copy null parameter");
 		
 		setDate(toCopy.getDate());
-		setFirstHiLow(toCopy.getFirstHiLow());
-		setSecondCloseOpen(toCopy.getSecondCloseOpen());
+		setFirstDiffHiLow(toCopy.getFirstDiffHiLow());
+		setSecondDiffCloseOpen(toCopy.getSecondDiffCloseOpen());
+	}
+	
+	public boolean equals(EngulfDataPoint toCompare) {
+		
+		return this.date.equals(toCompare.getDate()) && this.firstDiffHiLow == toCompare.getFirstDiffHiLow()
+				&& this.secondDiffCloseOpen == toCompare.getSecondDiffCloseOpen();
 	}
 	
 	public String getDate() {
@@ -57,19 +63,19 @@ public class EngulfDataPoint {
 		this.date = date;
 	}
 	
-	public double getFirstHiLow() {
-		return firstHiLow;
+	public double getFirstDiffHiLow() {
+		return firstDiffHiLow;
 	}
 	
-	public void setFirstHiLow(double f) {
-		firstHiLow = f;
+	public void setFirstDiffHiLow(double f) {
+		firstDiffHiLow = f;
 	}
 	
-	public double getSecondCloseOpen() {
-		return secondCloseOpen;
+	public double getSecondDiffCloseOpen() {
+		return secondDiffCloseOpen;
 	}
 	
-	public void setSecondCloseOpen(double s) {
-		secondCloseOpen = s;
+	public void setSecondDiffCloseOpen(double s) {
+		secondDiffCloseOpen = s;
 	}
 }
