@@ -178,6 +178,7 @@ public class StockList {
 	
 	/**
 	 * uses good ol' selection sort
+	 * changed
 	 * @return
 	 */
 	private ArrayList<StockDay> getDateLowToHigh() {
