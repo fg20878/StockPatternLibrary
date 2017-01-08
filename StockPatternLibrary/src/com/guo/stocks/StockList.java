@@ -77,7 +77,7 @@ public class StockList {
 		setSymbol(s);
 		stockList = new ArrayList<StockDay>(list.length);
 		
-		for(int i = 0; i < stockList.size(); i++)
+		for(int i = 0; i < list.length; i++)
 			stockList.add(list[i]);
 				
 	}
