@@ -15,34 +15,21 @@ public class StockTest {
 	public void StockDayTest01() {
 		
 		System.out.println("Start StockDay Test 1");
-		Random ran = new Random();
-
 		
-		for(int i = 0; i < 10; i++) {
-			int highInt = ran.nextInt(100000);
-			int lowInt = ran.nextInt(highInt);
-			int openInt = ran.nextInt(highInt - lowInt) + lowInt;
-			int closeInt = ran.nextInt(highInt - lowInt) + lowInt;
-			int volume = ran.nextInt( 99000) + 1000;
-			
-			double high = highInt / (double) 100;
-			double low = lowInt / (double) 100;
-			double open = openInt / (double) 100;
-			double close = closeInt / (double) 100;
-			
-			int year = ran.nextInt(10) + 2006;
-			int month = ran.nextInt(12) + 1;
-			int day = ran.nextInt(31) + 1;
-			while( (day == 31 && month % 2 == 0) || (month == 2 && day <= 29 && year % 4 != 0) )
-				day--;
-			String date = year + "-" + month + "-" + day;
-			StockDay test= new StockDay(open, close, high, low, volume, date);
-			assertTrue(test.getClosePrice() == close);
-			assertTrue(test.getOpenPrice() == open);
-			assertTrue(test.getHighPrice() == high);
-			assertTrue(test.getLowPrice() == low);
-			assertTrue(test.getDate().equals(date));
-		}
+		double high = 10.0;
+		double low = 6.0;
+		double open = 7.0;
+		double close = 8.0;
+		int volume = 1000000;
+		String date = "2017-01-06";
+		StockDay test= new StockDay(open, close, high, low, volume, date);
+		assertTrue( test.getClosePrice() == close &&
+					test.getOpenPrice() == open &&
+					test.getHighPrice() == high &&
+					test.getLowPrice() == low &&
+					test.getVolume() == volume &&
+					test.getDate().equals(date));
+
 		System.out.println("End StockDay Test 1\n\n");
 	}
 	
